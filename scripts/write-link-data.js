@@ -55,6 +55,12 @@ async function main() {
       );
     }
 
+    await pool.query(
+      `INSERT INTO link_sync_status (customer_name, synced_at) VALUES ($1, NOW())
+       ON CONFLICT (customer_name) DO UPDATE SET synced_at = NOW()`,
+      [customerName]
+    );
+
     console.log(`Synced ${customerName}: tasks=${(tasks || []).length}`);
   } finally {
     await pool.end();

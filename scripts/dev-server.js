@@ -424,14 +424,18 @@ async function handleApi(req, res) {
     const customerName = decodeURIComponent(linkMatch[1]);
     const { rows: taskRows } = await pgPool.query(
       `SELECT task_path AS "taskPath", task_type AS "taskType", status,
-              total_minutes AS "totalMinutes", teams, synced_at AS "syncedAt"
+              total_minutes AS "totalMinutes", teams
        FROM link_customer_tasks WHERE customer_name = $1 ORDER BY total_minutes DESC NULLS LAST`,
+      [customerName]
+    );
+    const { rows: syncRows } = await pgPool.query(
+      `SELECT synced_at AS "syncedAt" FROM link_sync_status WHERE customer_name = $1`,
       [customerName]
     );
     return jsonResponse(res, 200, {
       fields: null,
-      tasks: taskRows.map(({ syncedAt, ...t }) => t),
-      syncedAt: taskRows[0]?.syncedAt ?? null,
+      tasks: taskRows,
+      syncedAt: syncRows[0]?.syncedAt ?? null,
     });
   }
 

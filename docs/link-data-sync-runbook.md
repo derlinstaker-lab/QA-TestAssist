@@ -32,6 +32,11 @@ query pattern for them. This runbook only syncs recent tickets.
       `.subType` → `taskType` (the tool's response field is `subType`, not
       `type`; it may be `null`), `.status` → `status`,
       `.totalMinutes` → `totalMinutes`, `.teams` → `teams`.
+
+      If `teams` comes back as an array rather than a string, join it with
+      ", " before including it in the payload. `totalMinutes` should be a
+      plain integer; coerce with `Number(...)` if the tool returns it as a
+      string.
    c. Pipe it in: `echo '<json>' | node scripts/write-link-data.js`
    d. If that command exits non-zero, record `<name>` as failed and
       continue to the next customer — do not stop the whole run.

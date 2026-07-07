@@ -70,6 +70,13 @@ CREATE TABLE IF NOT EXISTS link_customer_tasks (
 CREATE INDEX IF NOT EXISTS idx_link_customer_tasks_customer_name
   ON link_customer_tasks (customer_name);
 
+-- Tracks when each customer's Link data was last synced, independent of
+-- whether any tasks were found (a customer can be synced with zero tasks).
+CREATE TABLE IF NOT EXISTS link_sync_status (
+    customer_name TEXT PRIMARY KEY REFERENCES customers(customer_name) ON DELETE CASCADE,
+    synced_at     TIMESTAMPTZ NOT NULL
+);
+
 -- Postman collections cache — synced from Postman API on server start
 CREATE TABLE IF NOT EXISTS postman_collections (
     uid         TEXT        PRIMARY KEY,

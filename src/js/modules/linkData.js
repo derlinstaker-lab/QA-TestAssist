@@ -14,9 +14,9 @@ function renderTasks(tbody, tasks) {
   }
   tbody.replaceChildren(...tasks.map(t => {
     const tr = document.createElement('tr');
-    [t.taskPath, t.taskType, t.status, t.totalMinutes ?? '—', t.teams].forEach(text => {
+    [t.taskPath, t.taskType, t.status, t.totalMinutes, t.teams].forEach(value => {
       const td = document.createElement('td');
-      td.textContent = text || '—';
+      td.textContent = (value === null || value === undefined || value === '') ? '—' : String(value);
       tr.appendChild(td);
     });
     return tr;

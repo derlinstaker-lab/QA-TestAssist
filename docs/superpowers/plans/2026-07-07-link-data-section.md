@@ -753,6 +753,11 @@ tickets-only fallback. No files are created or modified in this task.
 
 ### Task 6: Sync runbook documentation
 
+**Superseded:** the actual sync procedure lives in
+`docs/link-data-sync-runbook.md` — follow that file, not the code sample
+below, which predates two bugs found and fixed during Task 6's live dry-run
+(`.type`→`subType` field mapping, de-dup by `taskId`).
+
 **Files:**
 - Create: `docs/link-data-sync-runbook.md`
 
