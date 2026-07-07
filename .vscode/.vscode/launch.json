@@ -1,0 +1,79 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Dev Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/dev-server.js",
+      "args": ["--port", "3000"],
+      "console": "integratedTerminal",
+      "restart": true,
+      "runtimeArgs": ["--enable-source-maps"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "Run Build",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/build.js",
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    {
+      "name": "Run Build (Watch)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/build.js",
+      "args": ["--watch"],
+      "console": "integratedTerminal",
+      "restart": true,
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "Deploy: Dry Run (local)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/deploy.js",
+      "args": ["--target", "local"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Deploy: S3 (dry-run)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/deploy.js",
+      "args": ["--target", "s3", "--dry-run"],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "Deploy: GitHub Pages",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/deploy.js",
+      "args": ["--target", "gh-pages"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Lint",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/lint.js",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Dev: Build (Watch) + Dev Server",
+      "configurations": ["Run Build (Watch)", "Launch Dev Server"],
+      "stopAll": true
+    }
+  ]
+}

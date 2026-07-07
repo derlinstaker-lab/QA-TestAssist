@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ensure dev server",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "scripts/ensure-dev-server.js"
+            ],
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "qa-dashboard",
+                "pattern": {
+                    "regexp": "^$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*QA Test Assist.*Dev Server.*",
+                    "endsPattern": ".*Local:.*http://localhost:3000.*"
+                }
+            }
+        }
+    ]
+}

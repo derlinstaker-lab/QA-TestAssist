@@ -1,0 +1,130 @@
+/* ─────────────────────────────────────────
+   base.css — Reset, body, layout shell,
+   shared utilities and animations.
+───────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grid texture overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+
+/* Ambient glow */
+body::after {
+  content: '';
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse, rgba(0,229,255,0.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.layout {
+  position: relative; z-index: 1; min-height: 100vh;
+}
+
+main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--main-py) var(--main-px);
+  width: 100%;
+}
+
+/* ── Shared animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes fillBar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Badge (shared by multiple modules) ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.2rem 0.55rem; border-radius: var(--radius-sm);
+  font-size: 0.68rem; font-family: var(--font-mono);
+  font-weight: 700; letter-spacing: 0.04em;
+}
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+
+.pass  { background: rgba(34,197,94,0.1);  color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+.pass::before  { background: var(--success); }
+.fail  { background: rgba(239,68,68,0.1);  color: var(--danger);  border: 1px solid rgba(239,68,68,0.2); }
+.fail::before  { background: var(--danger); }
+.skip  { background: rgba(245,158,11,0.1); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
+.skip::before  { background: var(--warning); }
+
+/* ── HTTP method chips ── */
+.http-method {
+  font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
+  padding: 0.15rem 0.42rem; border-radius: 4px; white-space: nowrap;
+}
+.method-get    { background: rgba(34,197,94,0.12);  color: var(--success); }
+.method-post   { background: rgba(0,229,255,0.12);  color: var(--accent); }
+.method-put    { background: rgba(245,158,11,0.12); color: var(--warning); }
+.method-delete { background: rgba(239,68,68,0.12);  color: var(--danger); }
+.method-patch  { background: rgba(124,58,237,0.15); color: #a78bfa; }
+
+/* ── Status codes ── */
+.status-code {
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+  min-width: 36px; text-align: center;
+}
+.code-2xx { color: var(--success); }
+.code-3xx { color: var(--accent); }
+.code-4xx { color: var(--warning); }
+.code-5xx { color: var(--danger); }
+
+/* ── Empty state ── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 3rem 1.5rem; gap: 0.4rem;
+  color: var(--muted); text-align: center; flex: 1;
+}
+.empty-icon  { font-size: 2rem; opacity: 0.25; margin-bottom: 0.2rem; }
+.empty-title { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.empty-sub   { font-size: 0.73rem; opacity: 0.65; }
+
+/* ── Spinner ── */
+.spinner {
+  display: inline-block; width: 13px; height: 13px;
+  border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+  border-radius: 50%; animation: spin 0.65s linear infinite;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-pill); }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Postman Tests — QA Test Assist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/header.css"/>
+  <link rel="stylesheet" href="css/runner.css"/>
+  <link rel="stylesheet" href="css/customer.css"/>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Header ── -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">QA</div>
+        <h1>QA Test Assist</h1>
+      </div>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Customers</a>
+        <a href="test_assist.html" class="nav-link">Test Assist</a>
+        <a href="postman_tests.html" class="nav-link nav-link--active">Postman Tests</a>
+        <a href="test_results.html" class="nav-link">Test Results</a>
+      </nav>
+      <div class="header-controls">
+        <div class="controls-row">
+          <div class="select-group">
+            <span class="select-label">User</span>
+            <div class="custom-select">
+              <select id="user-select">
+                <option value="Derlin.Staker">Derlin.Staker</option>
+                <option value="Wayne.Dunlap">Wayne.Dunlap</option>
+                <option value="Gavin.Jeffes">Gavin.Jeffes</option>
+                <option value="Aghzam.Soopee">Aghzam.Soopee</option>
+                <option value="Zishaan.Ajmal">Zishaan.Ajmal</option>
+              </select>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="header-status">
+            <div class="status-dot"></div>
+            <span class="timestamp" id="clock">--:--:--</span>
+          </div>
+        </div>
+        <div class="controls-row">
+          <div class="select-group">
+            <span class="select-label">Env</span>
+            <div class="custom-select">
+              <select id="env-select"></select>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="select-group">
+            <span class="select-label">Customer</span>
+            <div class="autocomplete" id="customer-autocomplete">
+              <input type="text" id="customer-input" class="autocomplete-input"
+                     placeholder="Search…" autocomplete="off" spellcheck="false">
+              <ul class="autocomplete-list" id="customer-list" hidden></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="runner-grid">
+
+      <!-- Config -->
+      <div class="runner-config" id="runner-config">
+        <div class="runner-config-title">Run Configuration</div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Customer</label>
+            <div class="select-wrap">
+              <select class="field-select" id="r-customer"></select>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Environment</label>
+            <div class="select-wrap">
+              <select class="field-select" id="r-env"></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Collection</label>
+          <div class="select-wrap">
+            <select class="field-select" id="r-collection">
+              <option value="">(select a collection)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Postman Environment (optional)</label>
+          <div class="select-wrap">
+            <select class="field-select" id="r-postman-env">
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Folder (optional)</label>
+          <input class="field-input" id="r-folder" type="text" placeholder="e.g. Smoke Tests" />
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Env Var Overrides</label>
+          <textarea class="env-vars-area" id="r-envvars"
+            placeholder="baseUrl=https://qa.myapp.com&#10;apiKey=abc123&#10;userId=42"></textarea>
+        </div>
+
+        <div class="cmd-block">
+          <div class="cmd-copy-row">
+            <span class="cmd-copy-label">Generated Command</span>
+            <button class="copy-btn" id="copy-cmd-btn">Copy</button>
+          </div>
+          <div class="cmd-preview" id="cmd-preview"></div>
+        </div>
+
+        <button class="run-btn" id="run-btn">
+          <span id="run-icon">▶</span>&nbsp; Run Collection
+        </button>
+      </div>
+
+      <!-- Results -->
+      <div class="results-panel" id="results-panel">
+
+        <div class="tab-row">
+          <button class="tab-btn active" data-tab="results">Results</button>
+          <button class="tab-btn" data-tab="assertions">Assertions</button>
+          <button class="tab-btn" data-tab="console">Console</button>
+          <button class="tab-btn" data-tab="raw">Raw Results</button>
+        </div>
+
+        <div class="tab-pane active" id="tab-results">
+          <div class="run-summary">
+            <div class="summary-item">
+              <div class="summary-val s-cyan"  id="s-total">—</div>
+              <div class="summary-lbl">Requests</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-val s-green" id="s-pass">—</div>
+              <div class="summary-lbl">Passed</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-val s-red"   id="s-fail">—</div>
+              <div class="summary-lbl">Failed</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-val s-yellow" id="s-time">—</div>
+              <div class="summary-lbl">Duration</div>
+            </div>
+          </div>
+          <div class="result-list" id="result-list">
+            <div class="empty-state">
+              <div class="empty-icon">📭</div>
+              <div class="empty-title">No runs yet</div>
+              <div class="empty-sub">Configure a collection and click Run</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-assertions">
+          <div class="result-list" id="assertion-list">
+            <div class="empty-state">
+              <div class="empty-icon">🔍</div>
+              <div class="empty-title">No assertions</div>
+              <div class="empty-sub">Assertion results appear here after a run</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-console">
+          <div class="console-toolbar">
+            <span class="console-lbl">Console Output</span>
+            <button class="clear-btn" id="clear-console-btn">Clear</button>
+          </div>
+          <div class="console-body" id="console-log">
+            <span class="log-dim">// Run a collection to see output here</span>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tab-raw">
+          <div class="console-toolbar">
+            <span class="console-lbl">Raw JSON Response</span>
+          </div>
+          <div class="console-body" id="raw-results">
+            <span class="log-dim">// Run a collection to see raw output here</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script type="module" src="js/postman_tests.js"></script>
+</body>
+</html>

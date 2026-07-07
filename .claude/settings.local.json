@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(psql -U derlin.staker -c '\\\\l')",
+      "Bash(psql -U derlin -c '\\\\l')",
+      "Bash(psql -c '\\\\l')",
+      "Bash(psql -U derlin.staker -d postgres -c '\\\\l')",
+      "Bash(psql -d postgres -c '\\\\l')",
+      "Bash(python3 -)",
+      "Bash(psql -d postgres -c \"CREATE DATABASE qa_dashboard;\")",
+      "Bash(psql -d qa_dashboard -f /Users/derlin.staker/QA-Automation/qa-dashboard-modular/src/db/schema.sql)",
+      "Bash(psql -d qa_dashboard -f /Users/derlin.staker/QA-Automation/qa-dashboard-modular/src/db/seed.sql)",
+      "Bash(psql -d qa_dashboard -c \"DROP TABLE IF EXISTS customers CASCADE;\")",
+      "Bash(psql -d qa_dashboard -c ' *)",
+      "Skill(orangelogic-foundation:agent-browser)",
+      "Bash(curl -s http://localhost:3000/index.html)",
+      "Bash(npm i *)",
+      "Bash(agent-browser install *)",
+      "Bash(agent-browser skills *)",
+      "Bash(agent-browser open *)",
+      "Bash(agent-browser wait *)",
+      "Bash(agent-browser snapshot *)",
+      "Bash(agent-browser click *)",
+      "Bash(agent-browser get *)",
+      "Bash(agent-browser eval *)",
+      "Bash(agent-browser console *)",
+      "Bash(agent-browser errors *)",
+      "Bash(agent-browser screenshot *)",
+      "Bash(agent-browser close *)",
+      "mcp__plugin_orangelogic-foundation_ol-orange-mcp__SearchByConcept",
+      "mcp__plugin_orangelogic-foundation_ol-orange-mcp__SearchByKeyword",
+      "mcp__plugin_orangelogic-foundation_ol-orange-mcp__ListAllNames",
+      "Bash(python3 *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git reset *)",
+      "Bash(git config *)"
+    ]
+  }
+}

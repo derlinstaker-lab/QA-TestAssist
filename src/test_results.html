@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test Results — QA Test Assist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/header.css"/>
+  <link rel="stylesheet" href="css/panel.css"/>
+  <link rel="stylesheet" href="css/activity.css"/>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Header ── -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">QA</div>
+        <h1>QA Test Assist</h1>
+      </div>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Customers</a>
+        <a href="test_assist.html" class="nav-link">Test Assist</a>
+        <a href="postman_tests.html" class="nav-link">Postman Tests</a>
+        <a href="test_results.html" class="nav-link nav-link--active">Test Results</a>
+      </nav>
+      <div class="header-controls">
+        <div class="controls-row">
+          <div class="select-group">
+            <span class="select-label">User</span>
+            <div class="custom-select">
+              <select id="user-select">
+                <option value="Derlin.Staker">Derlin.Staker</option>
+                <option value="Wayne.Dunlap">Wayne.Dunlap</option>
+                <option value="Gavin.Jeffes">Gavin.Jeffes</option>
+                <option value="Aghzam.Soopee">Aghzam.Soopee</option>
+                <option value="Zishaan.Ajmal">Zishaan.Ajmal</option>
+              </select>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="header-status">
+            <div class="status-dot"></div>
+            <span class="timestamp" id="clock">--:--:--</span>
+          </div>
+        </div>
+        <div class="controls-row">
+          <div class="select-group">
+            <span class="select-label">Env</span>
+            <div class="custom-select">
+              <select id="env-select"></select>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="select-group">
+            <span class="select-label">Customer</span>
+            <div class="autocomplete" id="customer-autocomplete">
+              <input type="text" id="customer-input" class="autocomplete-input"
+                     placeholder="Search…" autocomplete="off" spellcheck="false">
+              <ul class="autocomplete-list" id="customer-list" hidden></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── Recent Runs + Activity ── -->
+    <div class="content-grid">
+
+      <div class="panel" id="runs-panel">
+        <div class="panel-header">
+          <span class="panel-title">Recent Test Runs</span>
+          <span class="panel-badge badge-cyan">LIVE</span>
+        </div>
+        <table id="runs-table">
+          <thead>
+            <tr>
+              <th>Test Name</th><th>Status</th><th>Duration</th><th>Module</th>
+            </tr>
+          </thead>
+          <tbody id="runs-tbody">
+            <!-- Populated by recentRuns.js -->
+          </tbody>
+        </table>
+        <div class="progress-section">
+          <div class="progress-label">
+            <span>Suite progress</span>
+            <span id="progress-pct">—</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="activity-panel">
+        <div class="panel-header">
+          <span class="panel-title">Activity</span>
+          <span class="panel-badge badge-green" id="activity-badge">—</span>
+        </div>
+        <div class="activity-list" id="activity-list">
+          <!-- Populated by activity.js -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script type="module" src="js/test_results.js"></script>
+</body>
+</html>

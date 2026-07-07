@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test Assist — QA Test Assist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/header.css"/>
+  <link rel="stylesheet" href="css/panel.css"/>
+  <link rel="stylesheet" href="css/runner.css"/>
+  <link rel="stylesheet" href="css/test_assist.css"/>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Header ── -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">QA</div>
+        <h1>QA Test Assist</h1>
+      </div>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Customers</a>
+        <a href="test_assist.html" class="nav-link nav-link--active">Test Assist</a>
+        <a href="postman_tests.html" class="nav-link">Postman Tests</a>
+        <a href="test_results.html" class="nav-link">Test Results</a>
+      </nav>
+      <div class="header-controls">
+        <div class="controls-row">
+          <div class="select-group">
+            <span class="select-label">User</span>
+            <div class="custom-select">
+              <select id="user-select">
+                <option value="Derlin.Staker">Derlin.Staker</option>
+                <option value="Wayne.Dunlap">Wayne.Dunlap</option>
+                <option value="Gavin.Jeffes">Gavin.Jeffes</option>
+                <option value="Aghzam.Soopee">Aghzam.Soopee</option>
+                <option value="Zishaan.Ajmal">Zishaan.Ajmal</option>
+              </select>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="header-status">
+            <div class="status-dot"></div>
+            <span class="timestamp" id="clock">--:--:--</span>
+          </div>
+        </div>
+        <div class="controls-row">
+          <div class="select-group">
+            <span class="select-label">Env</span>
+            <div class="custom-select">
+              <select id="env-select"></select>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="select-group">
+            <span class="select-label">Customer</span>
+            <div class="autocomplete" id="customer-autocomplete">
+              <input type="text" id="customer-input" class="autocomplete-input"
+                     placeholder="Search…" autocomplete="off" spellcheck="false">
+              <ul class="autocomplete-list" id="customer-list" hidden></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="panel" id="test-assist-panel">
+      <div class="panel-header">
+        <span class="panel-title">Test Assist</span>
+        <span class="panel-badge badge-cyan">BETA</span>
+      </div>
+      <div id="test-assist-body">
+
+        <!-- ── Test Strings ── -->
+        <div class="section-collapse" id="section-test-strings">
+          <button class="section-toggle" aria-expanded="true" aria-controls="test-strings-body">
+            <span class="panel-title">Test Strings</span>
+            <span class="section-chevron">▾</span>
+          </button>
+          <div class="section-body" id="test-strings-body">
+            <div class="section-content">
+              <div class="util-grid">
+
+                <!-- ── Random Number ── -->
+                <div class="util-card">
+                  <div class="util-card-title">Random Number</div>
+                  <div class="field-row">
+                    <div class="field-group">
+                      <label class="field-label" for="rn-min">Min</label>
+                      <input class="field-input" id="rn-min" type="number" value="0">
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="rn-max">Max</label>
+                      <input class="field-input" id="rn-max" type="number" value="9999">
+                    </div>
+                  </div>
+                  <label class="util-check"><input type="checkbox" id="rn-prefix-zeros"> Prefix Zeros?</label>
+                  <button class="util-btn" id="rn-generate">Generate</button>
+                  <div class="util-output-row">
+                    <span class="util-output is-empty" id="rn-output">—</span>
+                    <button class="copy-btn" data-copy="rn-output">Copy</button>
+                  </div>
+                </div>
+
+                <!-- ── Random String ── -->
+                <div class="util-card">
+                  <div class="util-card-title">Random String</div>
+                  <div class="field-group">
+                    <label class="field-label" for="rs-length">Length</label>
+                    <input class="field-input" id="rs-length" type="number" value="12" min="1" max="128">
+                  </div>
+                  <div class="util-checkboxes">
+                    <label class="util-check"><input type="checkbox" id="rs-upper" checked> Uppercase</label>
+                    <label class="util-check"><input type="checkbox" id="rs-lower" checked> Lowercase</label>
+                    <label class="util-check"><input type="checkbox" id="rs-digits" checked> Numbers</label>
+                    <label class="util-check"><input type="checkbox" id="rs-symbols"> Symbols</label>
+                  </div>
+                  <button class="util-btn" id="rs-generate">Generate</button>
+                  <div class="util-output-row">
+                    <span class="util-output is-empty" id="rs-output">—</span>
+                    <button class="copy-btn" data-copy="rs-output">Copy</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Special Characters + Useful Strings (side by side) ── -->
+              <div class="util-row-pair">
+
+                <!-- ── Special Characters ── -->
+                <div class="util-card">
+                  <div class="util-card-title">Special Characters</div>
+                  <div class="field-group">
+                    <label class="field-label" for="sc-preset">Preset</label>
+                    <div class="select-wrap">
+                      <select class="field-select" id="sc-preset">
+                        <option value="common">Common</option>
+                        <option value="sql">SQL Injection</option>
+                        <option value="xss">XSS</option>
+                        <option value="path">Path Traversal</option>
+                        <option value="unicode">Unicode</option>
+                        <option value="diacritics">Diacritic Characters</option>
+                        <option value="symbols">Common Symbols</option>
+                        <option value="currency">Currency</option>
+                        <option value="accented">Accented Characters</option>
+                        <option value="emoji">Emojis</option>
+                        <option value="math">Mathematical Symbols</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="util-output-row">
+                    <span class="util-output" id="sc-output"></span>
+                    <button class="copy-btn" data-copy="sc-output">Copy</button>
+                  </div>
+                </div>
+
+                <!-- ── Useful Strings ── -->
+                <div class="util-pair-col">
+                  <div class="util-card">
+                    <div class="util-card-title">Useful Strings</div>
+                    <p class="util-card-hint">TestUser Email</p>
+                    <div class="util-email-fields" id="su-email-fields">
+                      <div class="util-field-row">
+                        <input class="field-input" type="email" id="su-email" value="@OrangeLogic.com">
+                        <button class="copy-btn" data-copy="su-email">Copy</button>
+                        <button class="util-add-btn" id="su-email-add" title="Add email field">+</button>
+                      </div>
+                    </div>
+                    <p class="util-card-hint">TestUser Password</p>
+                    <div class="util-field-row">
+                      <input class="field-input" type="text" id="su-password" value="QualityControl@1">
+                      <button class="copy-btn" data-copy="su-password">Copy</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div>&nbsp;</div>
+              <!-- ── Useful URLs subsection ── -->
+              <div class="util-grid util-grid--wide">
+
+                <!-- Base URL -->
+                <div class="util-card">
+                  <div class="util-card-title">Useful URLs</div>
+                  <p class="util-card-hint">Base URL</p>
+                  <div class="util-output-row">
+                    <a class="util-output is-empty" id="su-baseurl" href="#" target="_blank" rel="noopener noreferrer">—</a>
+                    <button class="copy-btn" data-copy="su-baseurl">Copy</button>
+                  </div>
+                  <p class="util-card-hint">OLSSO</p>
+                  <div class="util-output-row">
+                    <a class="util-output is-empty" id="su-olsso" href="#" target="_blank" rel="noopener noreferrer">—</a>
+                    <button class="copy-btn" data-copy="su-olsso">Copy</button>
+                  </div>
+                  <p class="util-card-hint">Customer Profile Diff URL</p>
+                  <div class="util-output-row">
+                    <a class="util-output is-empty" id="su-configdiff" href="#" target="_blank" rel="noopener noreferrer">—</a>
+                    <button class="copy-btn" data-copy="su-configdiff">Copy</button>
+                  </div>
+                  <p class="util-card-hint">RunChecks URL</p>
+                  <div class="util-output-row">
+                    <span class="util-output is-empty" id="su-runchecks">—</span>
+                    <button class="copy-btn" data-copy="su-runchecks">Copy</button>
+                  </div>
+                  <p class="util-card-hint">Asset Record ID</p>
+                  <div class="util-field-row">
+                    <input class="field-input" type="text" id="su-asset-record-id" placeholder="Enter Record ID…">
+                  </div>
+                  <p class="util-card-hint">Asset Version URL</p>
+                  <div class="util-output-row">
+                    <span class="util-output is-empty" id="su-assetversion">—</span>
+                    <button class="copy-btn" data-copy="su-assetversion">Copy</button>
+                  </div>
+                  <p class="util-card-hint">QC Ping URL</p>
+                  <div class="util-output-row">
+                    <a class="util-output is-empty" id="su-qcping" href="#" target="_blank" rel="noopener noreferrer">—</a>
+                    <button class="copy-btn" data-copy="su-qcping">Copy</button>
+                  </div>
+                  <p class="util-card-hint">Swagger Asset Troubleshooting URL</p>
+                  <div class="util-output-row">
+                    <a class="util-output is-empty" id="su-swagger-asset" href="#" target="_blank" rel="noopener noreferrer">—</a>
+                    <button class="copy-btn" data-copy="su-swagger-asset">Copy</button>
+                  </div>
+                  <p class="util-card-hint">Docker Update History URL</p>
+                  <div class="util-output-row">
+                    <a class="util-output is-empty" id="su-docker-history" href="#" target="_blank" rel="noopener noreferrer">—</a>
+                    <button class="copy-btn" data-copy="su-docker-history">Copy</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── API Checks ── -->
+        <div class="section-collapse" id="section-api-checks">
+          <button class="section-toggle" aria-expanded="true" aria-controls="api-checks-body">
+            <span class="panel-title">API Checks</span>
+            <span class="section-chevron">▾</span>
+          </button>
+          <div class="section-body" id="api-checks-body">
+            <div class="section-content">
+
+              <div class="embed-controls">
+                <input class="field-input" id="ac-url" type="url" placeholder="Select a customer to populate the test URL…">
+                <button class="util-btn" id="ac-run">Run Checks</button>
+                <button class="copy-btn" data-copy="ac-url">Copy</button>
+              </div>
+
+              <p class="util-card-hint">Response Code</p>
+              <div class="util-output-row">
+                <span class="util-output is-empty" id="ac-response-code">—</span>
+                <button class="copy-btn" data-copy="ac-response-code">Copy</button>
+              </div>
+
+              <p class="util-card-hint">Response Body</p>
+              <div class="util-output-row ac-body-row">
+                <textarea class="ac-body-text" id="ac-response-body" readonly placeholder="(no response yet)"></textarea>
+                <button class="copy-btn" data-copy="ac-response-body">Copy</button>
+              </div>
+
+              <div id="ac-results"></div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Embed Checks ── -->
+        <div class="section-collapse" id="section-embed-checks">
+          <button class="section-toggle" aria-expanded="true" aria-controls="embed-checks-body">
+            <span class="panel-title">Embed Checks</span>
+            <span class="section-chevron">▾</span>
+          </button>
+          <div class="section-body" id="embed-checks-body">
+            <div class="section-content">
+
+              <div class="embed-controls">
+                <input class="field-input" id="ec-url" type="url" placeholder="https://example.com/image.png">
+                <button class="util-btn" id="ec-load">Load</button>
+                <button class="copy-btn" data-copy="ec-url">Copy</button>
+              </div>
+
+              <div class="embed-bg-row">
+                <span class="embed-bg-label">Background</span>
+                <div class="embed-bg-swatches" id="ec-swatches">
+                  <button class="embed-swatch is-active" data-bg="dark"  style="background:#0a0c10" title="Dark"></button>
+                  <button class="embed-swatch"           data-bg="white" style="background:#ffffff" title="White"></button>
+                  <button class="embed-swatch"           data-bg="light" style="background:#e5e7eb" title="Light Gray"></button>
+                  <button class="embed-swatch"           data-bg="mid"   style="background:#6b7280" title="Mid Gray"></button>
+                  <button class="embed-swatch"           data-bg="black" style="background:#000000" title="Black"></button>
+                  <button class="embed-swatch embed-swatch--check" data-bg="check"  title="Checkerboard"></button>
+                  <button class="embed-swatch" data-bg="red"    style="background:#ef4444" title="Red"></button>
+                  <button class="embed-swatch" data-bg="blue"   style="background:#3b82f6" title="Blue"></button>
+                  <button class="embed-swatch" data-bg="green"  style="background:#22c55e" title="Green"></button>
+                  <button class="embed-swatch" data-bg="yellow" style="background:#eab308" title="Yellow"></button>
+                </div>
+              </div>
+
+              <div class="embed-frame-wrapper" id="ec-frame-wrapper">
+                <div class="embed-placeholder" id="ec-empty">
+                  <div class="empty-title">No image loaded</div>
+                  <div class="empty-sub">Enter a URL above and click Load</div>
+                </div>
+                <img class="embed-img" id="ec-img" src="" alt="" hidden>
+                <div class="embed-placeholder embed-error" id="ec-error" hidden>
+                  <div class="empty-title">Failed to load</div>
+                  <div class="empty-sub">Check the URL or CORS policy on the server</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script type="module" src="js/test_assist.js"></script>
+</body>
+</html>

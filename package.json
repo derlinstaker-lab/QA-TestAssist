@@ -1,0 +1,30 @@
+{
+  "name": "qa-test-assist",
+  "version": "2.0.0",
+  "description": "QA Test Assist — modular ES module architecture",
+  "scripts": {
+    "dev": "node scripts/restart-server.js",
+    "build": "node scripts/build.js && node scripts/restart-server.js",
+    "build:watch": "node scripts/build.js --watch",
+    "preview": "node scripts/dev-server.js --dir dist",
+    "deploy": "node scripts/deploy.js",
+    "deploy:s3": "node scripts/deploy.js --target s3",
+    "deploy:gh-pages": "node scripts/deploy.js --target gh-pages",
+    "deploy:netlify": "node scripts/deploy.js --target netlify",
+    "clean": "node -e \"const fs=require('fs');if(fs.existsSync('dist')){fs.rmSync('dist',{recursive:true});console.log('Cleaned dist/')}\"",
+    "lint": "node scripts/lint.js"
+  },
+  "devDependencies": {
+    "chokidar": "^3.6.0",
+    "clean-css": "^5.3.3",
+    "html-minifier-terser": "^7.2.0",
+    "newman": "^6.2.2",
+    "terser": "^5.31.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "pg": "^8.20.0"
+  }
+}

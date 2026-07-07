@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+src/data/CustomerDataExport.csv
+*.log
+.DS_Store
+Thumbs.db

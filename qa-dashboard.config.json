@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "defaultEnv": "production",
+
+  "build": {
+    "minifyHTML": true,
+    "minifyCSS": true,
+    "minifyJS": true,
+    "sourcemap": false
+  },
+
+  "dev": {
+    "port": 3000,
+    "liveReload": true
+  },
+
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "qa_dashboard",
+    "user": "derlin.staker"
+  },
+
+  "deploy": {
+    "s3": {
+      "bucket": "",
+      "region": "us-east-1",
+      "prefix": "",
+      "websiteUrl": "",
+      "cloudfrontDistributionId": ""
+    },
+
+    "ghPages": {
+      "branch": "gh-pages",
+      "remote": "origin",
+      "nojekyll": true
+    },
+
+    "netlify": {
+      "siteId": "",
+      "production": true
+    }
+  }
+}

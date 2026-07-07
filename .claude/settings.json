@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(curl -s http://localhost:3000/api/customers)",
+      "Bash(psql -d qa_dashboard -c \"SELECT COUNT\\(*\\) FROM customers;\")",
+      "Bash(ps -p 15447 -o pid,lstart,command)",
+      "Bash(kill 15447)",
+      "Bash(node scripts/dev-server.js --port 3000)",
+      "Bash(node scripts/restart-server.js)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'{len\\(d\\)} customers — first: {d[0][\\\\\"customerName\\\\\"]}'\\)\")",
+      "Bash(psql -d qa_dashboard -c \"ALTER TABLE customers ADD COLUMN IF NOT EXISTS kb_article TEXT;\")",
+      "Bash(psql -d qa_dashboard -c \"\\\\d customers\")",
+      "Bash(psql -d qa_dashboard -c \"SELECT unique_id, customer_name, kb_article FROM customers WHERE kb_article IS NOT NULL LIMIT 5;\")",
+      "Bash(lsof -ti:3000)",
+      "Bash(xargs -I{} ps -p {} -o pid,lstart,command)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\);const r=JSON.parse\\(d\\);console.log\\('rows:',r.length,'first kbArticle key present:', 'kbArticle' in \\(r[0]||{}\\)\\);\")",
+      "Bash(newman --version)",
+      "Bash(postman --version)",
+      "Bash(npm list *)",
+      "Bash(npx newman *)",
+      "Read(//usr/local/bin/**)",
+      "Bash(node -e \"const n=require\\('newman'\\);console.log\\(typeof n.run\\)\")",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\);console.log\\('server up, rows:', JSON.parse\\(d\\).length\\)\")",
+      "Bash(curl -s -X POST http://localhost:3000/api/run -H 'Content-Type: application/json' -d '{}')",
+      "Bash(node -e \"process.stdin.resume\\(\\);let b='';process.stdin.on\\('data',d=>b+=d\\);process.stdin.on\\('end',\\(\\)=>console.log\\(JSON.parse\\(b\\)\\)\\)\")",
+      "Bash(node -e \"let b='';process.stdin.on\\('data',d=>b+=d\\);process.stdin.on\\('end',\\(\\)=>console.log\\('server up, rows:',JSON.parse\\(b\\).length\\)\\)\")"
+    ]
+  }
+}

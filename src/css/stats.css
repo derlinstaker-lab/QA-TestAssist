@@ -1,0 +1,41 @@
+/* ─────────────────────────────────────────
+   stats.css — KPI stat cards strip
+───────────────────────────────────────── */
+
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap-md); margin-bottom: var(--gap-xl);
+  animation: fadeUp 0.5s ease both;
+}
+
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.25rem 1.5rem;
+  position: relative; overflow: hidden;
+  transition: border-color var(--transition-std), transform var(--transition-std);
+}
+.stat-card:hover { border-color: rgba(0,229,255,0.3); transform: translateY(-2px); }
+
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  opacity: 0; transition: opacity var(--transition-std);
+}
+.stat-card:hover::before { opacity: 1; }
+
+.stat-label {
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); font-family: var(--font-mono); margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 2rem; font-weight: 600; line-height: 1;
+  margin-bottom: 0.35rem; font-family: var(--font-mono);
+}
+.stat-value.green  { color: var(--success); }
+.stat-value.red    { color: var(--danger); }
+.stat-value.yellow { color: var(--warning); }
+.stat-value.cyan   { color: var(--accent); }
+
+.stat-change { font-size: 0.72rem; color: var(--muted); }
+.stat-change .up { color: var(--success); }

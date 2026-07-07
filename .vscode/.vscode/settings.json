@@ -1,0 +1,62 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.rulers": [100],
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  "emmet.includeLanguages": {
+    "html": "html"
+  },
+
+  "html.format.wrapLineLength": 120,
+  "html.format.endWithNewline": true,
+  "html.format.indentInnerHtml": true,
+
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "files.exclude": {
+    "node_modules": true,
+    "dist/.git": true
+  },
+
+  "search.exclude": {
+    "node_modules": true,
+    "dist": true
+  },
+
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, .npmrc, .nvmrc",
+    "qa-dashboard.config.json": ".env, .env.*"
+  },
+
+  "npm.enableRunFromFolder": true,
+  "npm.packageManager": "npm",
+
+  "extensions.recommendations": [
+    "esbenp.prettier-vscode",
+    "ecmel.vscode-html-css",
+    "ritwickdey.liveserver",
+    "formulahendry.auto-rename-tag",
+    "ms-vscode.vscode-js-profile-flame",
+    "amazonwebservices.aws-toolkit-vscode",
+    "GitHub.vscode-pull-request-github"
+  ]
+}

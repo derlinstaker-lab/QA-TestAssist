@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "ecmel.vscode-html-css",
+    "ritwickdey.liveserver",
+    "formulahendry.auto-rename-tag",
+    "ms-vscode.vscode-js-profile-flame",
+    "amazonwebservices.aws-toolkit-vscode",
+    "GitHub.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "usernamehw.errorlens"
+  ]
+}

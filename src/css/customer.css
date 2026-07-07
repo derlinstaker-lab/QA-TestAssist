@@ -1,0 +1,200 @@
+/* ─────────────────────────────────────────
+   client.css — Client summary card
+───────────────────────────────────────── */
+
+.client-summary {
+  margin-bottom: var(--gap-xl);
+  animation: fadeUp 0.4s 0.05s ease both;
+}
+
+.cs-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cs-id-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--muted);
+  background: var(--border);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+}
+
+.cs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: var(--gap-md);
+  padding: 1.25rem 1.5rem;
+}
+
+.cs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cs-field--wide {
+  grid-column: span 2;
+}
+
+.cs-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.cs-value {
+  font-size: 0.84rem;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.cs-value a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.cs-value a:hover {
+  text-decoration: underline;
+}
+
+/* ── Customer table ── */
+.ct-panel { margin-bottom: var(--gap-xl); animation: fadeUp 0.4s ease both; }
+
+.ct-header-right {
+  display: flex; align-items: center; gap: 0.75rem;
+}
+
+.ct-search {
+  background: var(--console-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  padding: 0.28rem 0.65rem;
+  outline: none;
+  width: 180px;
+  transition: border-color var(--transition-fast), width var(--transition-std);
+}
+.ct-search:focus { border-color: var(--accent); width: 240px; }
+.ct-search::placeholder { color: var(--muted); }
+
+.ct-table-wrap {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+#customers-table thead { position: sticky; top: 0; background: var(--card-bg); z-index: 1; }
+
+#customers-tbody tr { cursor: pointer; }
+
+#customers-tbody tr.ct-row--active {
+  background: rgba(0,229,255,0.07);
+}
+#customers-tbody tr.ct-row--active td { color: var(--text); }
+#customers-tbody tr.ct-row--active .ct-name { color: var(--accent); }
+
+.ct-name { font-weight: 500; }
+
+.ct-url {
+  display: block;
+  color: var(--accent);
+  font-size: 0.75rem;
+  word-break: break-all;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ct-url:hover { text-decoration: underline; }
+
+.ct-status {
+  font-size: 0.68rem; font-family: var(--font-mono); font-weight: 700;
+  padding: 0.15rem 0.5rem; border-radius: var(--radius-pill);
+}
+.ct-status--support { background: rgba(34,197,94,0.12);  color: var(--success); }
+.ct-status--impl    { background: rgba(0,229,255,0.12);  color: var(--accent);  }
+.ct-status--sow     { background: rgba(245,158,11,0.12); color: var(--warning); }
+
+/* ── Action buttons ── */
+.cs-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cs-btn {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+.cs-btn:hover { color: var(--text); border-color: var(--muted); }
+.cs-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cs-btn--primary {
+  color: var(--accent);
+  border-color: rgba(0,229,255,0.35);
+  background: rgba(0,229,255,0.06);
+}
+.cs-btn--primary:hover {
+  background: rgba(0,229,255,0.12);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Edit form inputs ── */
+.cs-input,
+.cs-select,
+.cs-textarea {
+  width: 100%;
+  background: var(--console-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  padding: 0.4rem 0.6rem;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+.cs-input:focus,
+.cs-select:focus,
+.cs-textarea:focus { border-color: var(--accent); }
+
+.cs-textarea { resize: vertical; min-height: 3.5rem; }
+
+.cs-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+/* ── Save status bar ── */
+.cs-save-status {
+  margin: 0 1.5rem 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+}
+.cs-save-ok  { background: rgba(34,197,94,0.1);  color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+.cs-save-err { background: rgba(239,68,68,0.1);  color: var(--danger);  border: 1px solid rgba(239,68,68,0.2); }

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customers — QA Test Assist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/tokens.css"/>
+  <link rel="stylesheet" href="css/base.css"/>
+  <link rel="stylesheet" href="css/header.css"/>
+  <link rel="stylesheet" href="css/stats.css"/>
+  <link rel="stylesheet" href="css/panel.css"/>
+  <link rel="stylesheet" href="css/activity.css"/>
+  <link rel="stylesheet" href="css/runner.css"/>
+  <link rel="stylesheet" href="css/customer.css"/>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── Header ── -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">QA</div>
+        <h1>QA Test Assist</h1>
+      </div>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link nav-link--active">Customers</a>
+        <a href="test_assist.html" class="nav-link">Test Assist</a>
+        <a href="postman_tests.html" class="nav-link">Postman Tests</a>
+        <a href="test_results.html" class="nav-link">Test Results</a>
+      </nav>
+      <div class="header-controls">
+        <div class="controls-row">
+          <div class="select-group">
+            <span class="select-label">User</span>
+            <div class="custom-select">
+              <select id="user-select">
+                <option value="Derlin.Staker">Derlin.Staker</option>
+                <option value="Wayne.Dunlap">Wayne.Dunlap</option>
+                <option value="Gavin.Jeffes">Gavin.Jeffes</option>
+                <option value="Aghzam.Soopee">Aghzam.Soopee</option>
+                <option value="Zishaan.Ajmal">Zishaan.Ajmal</option>
+              </select>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="header-status">
+            <div class="status-dot"></div>
+            <span class="timestamp" id="clock">--:--:--</span>
+          </div>
+        </div>
+        <div class="controls-row">
+          <div class="select-group">
+            <span class="select-label">Env</span>
+            <div class="custom-select">
+              <select id="env-select"></select>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="select-group">
+            <span class="select-label">Customer</span>
+            <div class="autocomplete" id="customer-autocomplete">
+              <input type="text" id="customer-input" class="autocomplete-input"
+                     placeholder="Search…" autocomplete="off" spellcheck="false">
+              <ul class="autocomplete-list" id="customer-list" hidden></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── Stats Strip ── -->
+    <div class="stats-grid" id="stats-grid">
+      <!-- Populated by stats.js -->
+    </div>
+
+    <!-- ── Customer Table ── -->
+    <div class="panel ct-panel" id="customers-panel">
+      <div class="panel-header">
+        <span class="panel-title">Customers</span>
+        <div class="ct-header-right">
+          <button type="button" class="cs-btn" id="customers-refresh-btn">Refresh</button>
+          <input type="search" id="customer-search" class="ct-search" placeholder="Search…">
+          <span class="panel-badge badge-cyan" id="customers-count">—</span>
+        </div>
+      </div>
+      <div class="ct-table-wrap">
+        <table id="customers-table">
+          <thead>
+            <tr>
+              <th>Customer Name</th>
+              <th>Status</th>
+              <th>OL POC</th>
+              <th>Release</th>
+              <th>Production URL</th>
+              <th>Test URL</th>
+              <th>UAT URL</th>
+              <th>KB Article</th>
+            </tr>
+          </thead>
+          <tbody id="customers-tbody">
+            <tr><td colspan="8"><div class="empty-state"><div class="empty-title">Loading…</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Customer Summary ── -->
+    <div id="client-summary" class="client-summary panel">
+      <div class="panel-header">
+        <div class="cs-name-row">
+          <span id="cs-name" class="panel-title">—</span>
+          <span id="cs-status-badge" class="panel-badge badge-cyan">—</span>
+          <span class="cs-id-tag" id="cs-id">—</span>
+        </div>
+        <div class="cs-actions">
+          <button class="cs-btn cs-btn--primary" id="cs-new-btn">New Customer</button>
+          <button class="cs-btn" id="cs-edit-btn" hidden>Edit</button>
+          <button class="cs-btn cs-btn--primary" id="cs-save-btn" hidden>Save</button>
+          <button class="cs-btn" id="cs-cancel-btn" hidden>Cancel</button>
+        </div>
+      </div>
+
+      <!-- View mode -->
+      <div id="cs-view" class="cs-grid">
+        <div class="cs-field">
+          <span class="cs-label">OL POC</span>
+          <span class="cs-value" id="cs-poc">—</span>
+        </div>
+        <div class="cs-field">
+          <span class="cs-label">Customer Success Manager</span>
+          <span class="cs-value" id="cs-csm">—</span>
+        </div>
+        <div class="cs-field">
+          <span class="cs-label">Project Manager</span>
+          <span class="cs-value" id="cs-pm">—</span>
+        </div>
+        <div class="cs-field">
+          <span class="cs-label">Implementation Lead</span>
+          <span class="cs-value" id="cs-impl">—</span>
+        </div>
+        <div class="cs-field">
+          <span class="cs-label">Release</span>
+          <span class="cs-value" id="cs-release">—</span>
+        </div>
+        <div class="cs-field">
+          <span class="cs-label">KB Article</span>
+          <span class="cs-value" id="cs-kb">—</span>
+        </div>
+        <div class="cs-field">
+          <span class="cs-label">Launched</span>
+          <span class="cs-value" id="cs-launched">—</span>
+        </div>
+        <div class="cs-field">
+          <span class="cs-label">Launch Date</span>
+          <span class="cs-value" id="cs-launch">—</span>
+        </div>
+        <div class="cs-field cs-field--wide">
+          <span class="cs-label">Production URL</span>
+          <span class="cs-value" id="cs-prod">—</span>
+        </div>
+        <div class="cs-field cs-field--wide">
+          <span class="cs-label">Test URL</span>
+          <span class="cs-value" id="cs-test">—</span>
+        </div>
+        <div class="cs-field cs-field--wide">
+          <span class="cs-label">UAT URL</span>
+          <span class="cs-value" id="cs-uat">—</span>
+        </div>
+        <div class="cs-field cs-field--wide">
+          <span class="cs-label">INT URL</span>
+          <span class="cs-value" id="cs-int">—</span>
+        </div>
+        <div class="cs-field cs-field--wide">
+          <span class="cs-label">PPE URL</span>
+          <span class="cs-value" id="cs-ppe">—</span>
+        </div>
+        <div class="cs-field cs-field--wide">
+          <span class="cs-label">Stage URL</span>
+          <span class="cs-value" id="cs-stage">—</span>
+        </div>
+      </div>
+
+      <!-- Edit form (populated by JS) -->
+      <div id="cs-form" class="cs-grid" hidden></div>
+
+      <div id="cs-save-status" class="cs-save-status" hidden></div>
+    </div>
+
+
+  </main>
+</div>
+
+<!-- ES module entry point -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
