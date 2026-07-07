@@ -418,6 +418,23 @@ async function handleApi(req, res) {
     return jsonResponse(res, 200, rows[0]);
   }
 
+  // GET /api/link-data/:customerName — Link data cache, read-only
+  const linkMatch = url.match(/^\/api\/link-data\/(.+)$/);
+  if (linkMatch && req.method === 'GET') {
+    const customerName = decodeURIComponent(linkMatch[1]);
+    const { rows: taskRows } = await pgPool.query(
+      `SELECT task_path AS "taskPath", task_type AS "taskType", status,
+              total_minutes AS "totalMinutes", teams, synced_at AS "syncedAt"
+       FROM link_customer_tasks WHERE customer_name = $1 ORDER BY total_minutes DESC NULLS LAST`,
+      [customerName]
+    );
+    return jsonResponse(res, 200, {
+      fields: null,
+      tasks: taskRows.map(({ syncedAt, ...t }) => t),
+      syncedAt: taskRows[0]?.syncedAt ?? null,
+    });
+  }
+
   // POST /api/run — execute Postman CLI and return results
   if (url === '/api/run' && req.method === 'POST') {
     let body;
