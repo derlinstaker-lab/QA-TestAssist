@@ -22,10 +22,15 @@ query pattern for them. This runbook only syncs recent tickets.
    a. Call `GetCustomerRecentWork` with `customer: "<name>"`,
       `time_start`: 14 days before today (ISO 8601), `time_end`: today
       (ISO 8601).
-   b. Build the JSON payload:
-      `{"customerName": "<name>", "tasks": [<mapped tasks>]}`
-      — map `GetCustomerRecentWork`'s `tasks[].path` → `taskPath`,
-      `.type` → `taskType`, `.status` → `status`,
+   b. `GetCustomerRecentWork` has been observed to return every task twice
+      in the `tasks` array with identical `taskId`s (e.g. `totalTasks: 20`
+      but `returned: 40`). Before building the payload, de-duplicate
+      `tasks` by `taskId`, keeping one copy of each unique `taskId`.
+      Build the JSON payload:
+      `{"customerName": "<name>", "tasks": [<mapped, de-duplicated tasks>]}`
+      — map the de-duplicated `tasks[].path` → `taskPath`,
+      `.subType` → `taskType` (the tool's response field is `subType`, not
+      `type`; it may be `null`), `.status` → `status`,
       `.totalMinutes` → `totalMinutes`, `.teams` → `teams`.
    c. Pipe it in: `echo '<json>' | node scripts/write-link-data.js`
    d. If that command exits non-zero, record `<name>` as failed and
