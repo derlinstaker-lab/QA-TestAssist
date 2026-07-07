@@ -12,10 +12,12 @@ import { initActivity }           from './modules/activity.js';
 import { initHeaderSync }         from './modules/headerSync.js';
 import { initEnvironmentSelects } from './modules/environmentSelects.js';
 import { initClientSelects }      from './modules/customerSelect.js';
+import { initLinkData }           from './modules/linkData.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initEnvironmentSelects();
   initClientSelects();
+  initLinkData();
   initClock();
   initStats();
   initRecentRuns();
