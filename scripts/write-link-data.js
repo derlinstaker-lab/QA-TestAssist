@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 /**
- * write-link-data.js — upserts one customer's synced Link tickets into Postgres.
+ * write-link-data.js — upserts one customer's synced Link data into Postgres.
  *
  * Usage: echo '<json>' | node scripts/write-link-data.js
- * Input JSON shape: { "customerName": string, "tasks": Array<{taskPath, taskType, status, totalMinutes, teams}> }
+ * Input JSON shape: {
+ *   "customerName": string,
+ *   "fields"?: object,  // raw GetTaskDetail parent_task object; omit if unavailable
+ *   "tasks": Array<{taskPath, taskType, status, totalMinutes, teams}>
+ * }
  *
- * Note: Link's Customer-record fields are not synced in this build — Task 1's
- * spike found no reliable query pattern for them (see docs/superpowers/plans/
- * 2026-07-07-link-data-section.md, Task 1's "Spike result"). Only ticket data
- * is written.
+ * "fields" is stored verbatim as JSONB — no curation. See
+ * docs/superpowers/specs/2026-07-08-link-customer-fields-revival-design.md.
  */
 const { Pool } = require('pg');
 const fs = require('fs');
@@ -32,7 +34,7 @@ async function main() {
     process.exit(1);
   }
 
-  const { customerName, tasks } = input;
+  const { customerName, fields, tasks } = input;
   if (!customerName || typeof customerName !== 'string') {
     console.error('customerName is required');
     process.exit(1);
@@ -46,6 +48,14 @@ async function main() {
   const pool = new Pool(config.database);
 
   try {
+    if (fields && typeof fields === 'object') {
+      await pool.query(
+        `INSERT INTO link_customer_fields (customer_name, data, synced_at) VALUES ($1, $2, NOW())
+         ON CONFLICT (customer_name) DO UPDATE SET data = EXCLUDED.data, synced_at = NOW()`,
+        [customerName, JSON.stringify(fields)]
+      );
+    }
+
     await pool.query('DELETE FROM link_customer_tasks WHERE customer_name = $1', [customerName]);
     for (const t of tasks || []) {
       await pool.query(
@@ -61,7 +71,7 @@ async function main() {
       [customerName]
     );
 
-    console.log(`Synced ${customerName}: tasks=${(tasks || []).length}`);
+    console.log(`Synced ${customerName}: fields=${fields ? 'yes' : 'no'}, tasks=${(tasks || []).length}`);
   } finally {
     await pool.end();
   }
