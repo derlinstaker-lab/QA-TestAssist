@@ -428,12 +428,16 @@ async function handleApi(req, res) {
        FROM link_customer_tasks WHERE customer_name = $1 ORDER BY total_minutes DESC NULLS LAST`,
       [customerName]
     );
+    const { rows: fieldRows } = await pgPool.query(
+      `SELECT data FROM link_customer_fields WHERE customer_name = $1`,
+      [customerName]
+    );
     const { rows: syncRows } = await pgPool.query(
       `SELECT synced_at AS "syncedAt" FROM link_sync_status WHERE customer_name = $1`,
       [customerName]
     );
     return jsonResponse(res, 200, {
-      fields: null,
+      fields: fieldRows[0]?.data ?? null,
       tasks: taskRows,
       syncedAt: syncRows[0]?.syncedAt ?? null,
     });
