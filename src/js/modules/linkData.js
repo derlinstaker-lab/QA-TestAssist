@@ -7,6 +7,12 @@
  * renders the recent-tickets sub-panel.
  */
 
+import { getSelectedCustomer } from './customerSelect.js';
+
+const COPY_LABEL = 'Copy Sync Command';
+const COPIED_LABEL = 'Copied!';
+const COPIED_RESET_MS = 1500;
+
 function renderTasks(tbody, tasks) {
   if (!tasks.length) {
     tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-title">No recent tickets</div></div></td></tr>';
@@ -27,7 +33,16 @@ function formatSyncedAt(iso) {
   return iso ? new Date(iso).toLocaleString() : null;
 }
 
+function updateSyncButton(customer) {
+  const btn = document.getElementById('link-data-sync-btn');
+  if (!btn) return;
+  btn.disabled = customer.customerName.startsWith('QA-');
+  btn.textContent = COPY_LABEL;
+}
+
 async function loadLinkData(customer) {
+  updateSyncButton(customer);
+
   const syncBadge = document.getElementById('link-data-synced');
   const tasksBody = document.getElementById('link-tasks-tbody');
   if (!syncBadge || !tasksBody) return;
@@ -51,6 +66,25 @@ async function loadLinkData(customer) {
   }
 }
 
+async function copySyncCommand() {
+  const customer = getSelectedCustomer();
+  if (!customer) return;
+  const btn = document.getElementById('link-data-sync-btn');
+  const promptText = `Sync Link data for customer "${customer.customerName}" (single customer only) per docs/link-data-sync-runbook.md.`;
+
+  try {
+    await navigator.clipboard.writeText(promptText);
+    if (btn) {
+      btn.textContent = COPIED_LABEL;
+      setTimeout(() => { btn.textContent = COPY_LABEL; }, COPIED_RESET_MS);
+    }
+  } catch (err) {
+    console.warn('Clipboard write failed, falling back to prompt:', err.message);
+    window.prompt('Copy this into a Claude Code session:', promptText);
+  }
+}
+
 export function initLinkData() {
   document.addEventListener('customer:selected', e => loadLinkData(e.detail));
+  document.getElementById('link-data-sync-btn')?.addEventListener('click', copySyncCommand);
 }
