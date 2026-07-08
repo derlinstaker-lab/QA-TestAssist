@@ -2,9 +2,10 @@
  * linkData.js — renders the "Link Data" panel for the selected customer.
  * Reads only from /api/link-data/:customerName; never talks to Link directly.
  *
- * Note: Link Customer-record fields are not synced in this build (Task 1's
- * spike found no reliable query pattern for them) — this module only
- * renders the recent-tickets sub-panel.
+ * "Link Customer Fields" shows Link's raw per-customer account data,
+ * uncurated — see
+ * docs/superpowers/specs/2026-07-08-link-customer-fields-revival-design.md.
+ * "Recent Link Tickets" shows the last synced 14-day ticket window.
  */
 
 import { getSelectedCustomer } from './customerSelect.js';
@@ -12,6 +13,46 @@ import { getSelectedCustomer } from './customerSelect.js';
 const COPY_LABEL = 'Copy Sync Command';
 const COPIED_LABEL = 'Copied!';
 const COPIED_RESET_MS = 1500;
+
+function stripHtml(str) {
+  return String(str).replace(/<[^>]*>/g, '');
+}
+
+function displayValue(raw) {
+  if (raw === null || raw === undefined || raw === '') return '—';
+  if (Array.isArray(raw)) {
+    const parts = raw.map(displayValue).filter(v => v !== '—');
+    return parts.length ? parts.join(', ') : '—';
+  }
+  if (typeof raw === 'object') {
+    return raw.Value !== undefined ? displayValue(raw.Value) : '—';
+  }
+  const text = stripHtml(String(raw)).trim();
+  return text || '—';
+}
+
+function renderFields(container, fields) {
+  container.replaceChildren();
+  if (!fields) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.innerHTML = '<div class="empty-title">No data</div>';
+    container.appendChild(empty);
+    return;
+  }
+  Object.entries(fields).forEach(([key, value]) => {
+    const field = document.createElement('div');
+    field.className = 'cs-field';
+    const labelEl = document.createElement('span');
+    labelEl.className = 'cs-label';
+    labelEl.textContent = key;
+    const valueEl = document.createElement('span');
+    valueEl.className = 'cs-value';
+    valueEl.textContent = displayValue(value);
+    field.append(labelEl, valueEl);
+    container.appendChild(field);
+  });
+}
 
 function renderTasks(tbody, tasks) {
   if (!tasks.length) {
@@ -44,11 +85,13 @@ async function loadLinkData(customer) {
   updateSyncButton(customer);
 
   const syncBadge = document.getElementById('link-data-synced');
+  const fieldsGrid = document.getElementById('link-fields-grid');
   const tasksBody = document.getElementById('link-tasks-tbody');
-  if (!syncBadge || !tasksBody) return;
+  if (!syncBadge || !fieldsGrid || !tasksBody) return;
 
   if (customer.customerName.startsWith('QA-')) {
     syncBadge.textContent = 'Not synced (excluded)';
+    renderFields(fieldsGrid, null);
     renderTasks(tasksBody, []);
     return;
   }
@@ -58,10 +101,12 @@ async function loadLinkData(customer) {
     if (!resp.ok) throw new Error(`Link data API error: ${resp.status}`);
     const data = await resp.json();
     syncBadge.textContent = data.syncedAt ? `Last synced: ${formatSyncedAt(data.syncedAt)}` : 'Never synced';
+    renderFields(fieldsGrid, data.fields);
     renderTasks(tasksBody, data.tasks || []);
   } catch (err) {
     console.warn('Link data unavailable:', err.message);
     syncBadge.textContent = 'Never synced';
+    renderFields(fieldsGrid, null);
     renderTasks(tasksBody, []);
   }
 }
