@@ -77,6 +77,15 @@ CREATE TABLE IF NOT EXISTS link_sync_status (
     synced_at     TIMESTAMPTZ NOT NULL
 );
 
+-- Raw per-customer Link account/profile data (uncurated) — captured via
+-- GetTaskDetail's parent_task on any known ticket for that customer. See
+-- docs/superpowers/specs/2026-07-08-link-customer-fields-revival-design.md.
+CREATE TABLE IF NOT EXISTS link_customer_fields (
+    customer_name TEXT PRIMARY KEY REFERENCES customers(customer_name) ON DELETE CASCADE,
+    data          JSONB NOT NULL,
+    synced_at     TIMESTAMPTZ NOT NULL
+);
+
 -- Postman collections cache — synced from Postman API on server start
 CREATE TABLE IF NOT EXISTS postman_collections (
     uid         TEXT        PRIMARY KEY,
