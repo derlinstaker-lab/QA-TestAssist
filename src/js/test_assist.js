@@ -96,6 +96,8 @@ const ENV_URL_PROP = {
 };
 
 function initSiteUrls() {
+  let baseUrlOverride = null;
+
   function setSiteUrl(id, url) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -104,25 +106,55 @@ function initSiteUrls() {
     el.href = url || '#';
   }
 
+  function renderAlternateUrls(urls) {
+    const container = document.getElementById('su-alternate-urls');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!urls.length) {
+      container.innerHTML = '<div class="util-output-row"><span class="util-output is-empty">—</span></div>';
+      return;
+    }
+    urls.forEach((url, i) => {
+      const display = url.replace(/\/olsso\/?$/i, '').replace(/\/+$/, '');
+      const id  = `su-alt-url-${i}`;
+      const row = document.createElement('div');
+      row.className = 'util-output-row';
+      row.innerHTML = `
+        <span class="util-output" id="${id}">${display}</span>
+        <button class="copy-btn" data-copy="${id}">Copy</button>
+        <button class="copy-btn" data-use-base="${i}">Use as BaseURL</button>`;
+      row.querySelector('[data-use-base]').addEventListener('click', () => {
+        baseUrlOverride = url;
+        update();
+      });
+      container.appendChild(row);
+    });
+  }
+
   function update() {
     const customer = getSelectedCustomer();
     const env      = document.getElementById('env-select')?.value;
     const raw      = customer?.[ENV_URL_PROP[env]];
-    const baseUrl  = raw ? raw.split(',')[0].trim() : null;
+    const rawUrls    = raw ? raw.split(',').map(u => u.trim()).filter(Boolean) : [];
+    const rawBaseUrl = (baseUrlOverride && rawUrls.includes(baseUrlOverride)) ? baseUrlOverride : (rawUrls[0] ?? null);
+    const alternateUrls = rawUrls.filter(u => u !== rawBaseUrl);
     const recordId = document.getElementById('su-asset-record-id')?.value.trim() ?? '';
+    const baseUrl  = rawBaseUrl ? rawBaseUrl.replace(/\/olsso\/?$/i, '').replace(/\/+$/, '') : null;
     setSiteUrl('su-baseurl',     baseUrl || null);
-    setSiteUrl('su-olsso',       baseUrl ? baseUrl.replace(/\/+$/, '') + '/OLSSO' : null);
-    setSiteUrl('su-configdiff',  baseUrl ? baseUrl.replace(/\/+$/, '') + '/CS.aspx?VP3=ParamDiff&Profile=COR&Module=ActivatedModules_BO' : null);
-    setOutput('su-runchecks',    baseUrl ? baseUrl.replace(/\/+$/, '') + '/API/Monitoring/v1.0/RunChecks' : '—');
-    setOutput('su-assetversion', baseUrl ? baseUrl.replace(/\/+$/, '') + '/webapi/mediafile/assetfile/getassetversions_4FS_v1?RecordID=' + recordId : '—');
-    setSiteUrl('su-qcping',       baseUrl ? baseUrl.replace(/\/+$/, '') + '/API/QualityControl/v1.0/Ping?format=JSON' : null);
-    setSiteUrl('su-swagger-asset',  baseUrl ? baseUrl.replace(/\/+$/, '') + '/swagger/index.html?urls.primaryName=search#/SearchEngine/get_webapi_search_searchengine_troubleshooting_get_index_43D_v1' : null);
-    setSiteUrl('su-docker-history', baseUrl ? baseUrl.replace(/\/+$/, '') + '/C.aspx?VP3=CortexUpgradeDocker_History' : null);
+    renderAlternateUrls(alternateUrls);
+    setSiteUrl('su-olsso',       baseUrl ? baseUrl + '/OLSSO' : null);
+    setSiteUrl('su-configdiff',  baseUrl ? baseUrl + '/CS.aspx?VP3=ParamDiff&Profile=COR&Module=ActivatedModules_BO' : null);
+    setOutput('su-runchecks',    baseUrl ? baseUrl + '/API/Monitoring/v1.0/RunChecks' : '—');
+    setOutput('su-assetversion', baseUrl ? baseUrl + '/webapi/mediafile/assetfile/getassetversions_4FS_v1?RecordID=' + recordId : '—');
+    setSiteUrl('su-qcping',       baseUrl ? baseUrl + '/API/QualityControl/v1.0/Ping?format=JSON' : null);
+    setSiteUrl('su-swagger-asset',  baseUrl ? baseUrl + '/swagger/index.html?urls.primaryName=search#/SearchEngine/get_webapi_search_searchengine_troubleshooting_get_index_43D_v1' : null);
+    setSiteUrl('su-docker-history', baseUrl ? baseUrl + '/C.aspx?VP3=CortexUpgradeDocker_History' : null);
   }
 
   function resetAndUpdate() {
     const recordIdEl = document.getElementById('su-asset-record-id');
     if (recordIdEl) recordIdEl.value = '';
+    baseUrlOverride = null;
     update();
   }
 
