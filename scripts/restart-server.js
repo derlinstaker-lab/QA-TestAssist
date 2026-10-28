@@ -24,6 +24,13 @@ function loadConfig() {
   } catch { return {}; }
 }
 
+// `npm run build` restarts the local server for convenience; in CI there is no
+// server to restart (and no Postman key for it to start with), so skip it.
+if (args.includes('--skip-in-ci') && process.env.CI) {
+  console.log('[restart] CI detected — skipping dev server restart');
+  process.exit(0);
+}
+
 const PORT = argValue(args, '--port') || loadConfig().dev?.port || 3000;
 
 // Kill anything currently holding the port

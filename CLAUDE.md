@@ -10,7 +10,7 @@ QA Test Assist — an internal QA tooling dashboard for running/inspecting Postm
 
 ```bash
 npm run dev              # kill whatever holds the port, then start scripts/dev-server.js on :3000
-npm run build            # scripts/build.js → dist/index.html, then restarts the dev server
+npm run build            # scripts/build.js → dist/index.html, then restarts the dev server (skipped when CI is set)
 npm run build:watch      # rebuild dist/ on every save under src/
 npm run preview          # serve dist/ (production build) to sanity-check before deploy
 npm run lint             # scripts/lint.js — custom structural linter (see below)

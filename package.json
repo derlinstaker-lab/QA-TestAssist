@@ -4,7 +4,7 @@
   "description": "QA Test Assist — modular ES module architecture",
   "scripts": {
     "dev": "node scripts/restart-server.js",
-    "build": "node scripts/build.js && node scripts/restart-server.js",
+    "build": "node scripts/build.js && node scripts/restart-server.js --skip-in-ci",
     "build:watch": "node scripts/build.js --watch",
     "preview": "node scripts/dev-server.js --dir dist",
     "deploy": "node scripts/deploy.js",
