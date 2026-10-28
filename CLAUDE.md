@@ -83,4 +83,4 @@ All routes 503 if the Postgres pool didn't initialize (`pgPool` is `null` when `
 
 ### CI/CD
 
-`.github/workflows/ci-cd.yml`: `lint` → `build` → conditional deploy job (`gh-pages` auto-deploys on push to `main`/`master`; `s3`/`netlify` are `workflow_dispatch`-only, picked via the `deploy_target` input). The build artifact uploaded/downloaded between jobs is the `dist/` directory produced by `npm run build` — i.e. only the bundled `index.html`, not the other three pages.
+`.github/workflows/ci-cd.yml`: `lint` → `build` → conditional deploy job. All three targets (`gh-pages`, `s3`, `netlify`) are `workflow_dispatch`-only, picked via the `deploy_target` input — pushes and PRs only lint and build. The build artifact uploaded/downloaded between jobs is the `dist/` directory produced by `npm run build` — i.e. only the bundled `index.html`, not the other pages. The gh-pages path in `scripts/deploy.js` is currently broken (it pushes a branch that only exists in the temporary `dist/` repo, and to the local repo rather than the remote).
