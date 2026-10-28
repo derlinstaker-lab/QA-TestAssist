@@ -21,6 +21,13 @@ loadEnvFile(path.join(__dirname, '..', '.env'));
 const POSTMAN_CLI     = process.env.POSTMAN_CLI || '/opt/homebrew/bin/postman';
 const POSTMAN_API_KEY = process.env.POSTMAN_API_KEY;
 
+// Headless Claude Code CLI used for on-demand Link syncs. The server has no Link
+// auth of its own; the CLI reuses the local user's claude.ai Link connector.
+const CLAUDE_CLI      = process.env.CLAUDE_CLI || path.join(os.homedir(), '.local', 'bin', 'claude');
+const LINK_SYNC_TIMEOUT_MS = 20 * 60 * 1000;
+const LINK_SYNC_MAX_USD    = process.env.LINK_SYNC_MAX_USD || '3'; // per click; the CLI stops the run past this
+const LINK_SYNC_JOBS  = new Map(); // customerName → { state, startedAt, finishedAt?, error?, notes?, taskCount?, hasFields? }
+
 if (!POSTMAN_API_KEY) {
   console.warn('[postman] POSTMAN_API_KEY not set — copy .env.example to .env and fill it in. Postman sync/run routes will fail.');
 }
@@ -313,6 +320,96 @@ function jsonResponse(res, status, body) {
   res.end(payload);
 }
 
+// ── Link sync (headless Claude Code) ─────────────────
+// Read-only Link tools only. Write tools (PostComment, SetTaskStatus, UpdateFields,
+// Records_Upsert, Bid, …) are left out, and with --permission-mode dontAsk anything
+// not listed here is denied. Claude gets no shell; the server writes to Postgres.
+const LINK_READ_TOOLS = [
+  'SearchAssets', 'AggregateAssets', 'GetRelations', 'GetDependencies',
+  'GetQuerySyntaxGuide', 'GetAggregationSyntaxGuide', 'GetSearchCapabilities',
+  'ListRetrievableFields', 'ListAggregatableFields', 'ListRelationTypes',
+  'DataModel_ListSubtypes', 'GetAuthorityListValues',
+].map(name => `mcp__claude_ai_link__${name}`);
+
+const LINK_SYNC_SCHEMA = {
+  type: 'object',
+  required: ['tasks', 'fields', 'notes'],
+  properties: {
+    tasks: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['taskPath', 'taskType', 'status', 'totalMinutes', 'teams'],
+        properties: {
+          taskPath:     { type: 'string' },
+          taskType:     { type: ['string', 'null'] },
+          status:       { type: ['string', 'null'] },
+          totalMinutes: { type: ['integer', 'null'] },
+          teams:        { type: ['string', 'null'] },
+        },
+      },
+    },
+    fields: { type: ['object', 'null'] },
+    notes:  { type: 'string' },
+  },
+};
+
+function runProcess(cmd, cmdArgs, { input, cwd, timeoutMs } = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, cmdArgs, { cwd, env: { ...process.env } });
+    let stdout = '', stderr = '';
+    const timer = timeoutMs && setTimeout(() => {
+      child.kill('SIGTERM');
+      reject(new Error(`${path.basename(cmd)} timed out after ${Math.round(timeoutMs / 60000)} min`));
+    }, timeoutMs);
+    child.stdout.on('data', d => { stdout += d; });
+    child.stderr.on('data', d => { stderr += d; });
+    child.on('error', err => { clearTimeout(timer); reject(err); });
+    child.on('close', code => {
+      clearTimeout(timer);
+      if (code === 0) resolve(stdout);
+      else reject(new Error((stderr || stdout).trim().split('\n').pop() || `${path.basename(cmd)} exited ${code}`));
+    });
+    if (input !== undefined) child.stdin.end(input);
+  });
+}
+
+async function runLinkSync(customerName) {
+  const today = new Date();
+  const since = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000);
+  const isoDate = d => d.toISOString().slice(0, 10);
+  const prompt = fs.readFileSync(path.join(__dirname, 'link-sync-prompt.md'), 'utf8')
+    .replaceAll('{{customerName}}', customerName)
+    .replaceAll('{{today}}', isoDate(today))
+    .replaceAll('{{since}}', isoDate(since));
+
+  console.log(`[link-sync] ${customerName}: started`);
+  const stdout = await runProcess(CLAUDE_CLI, [
+    '-p', prompt,
+    '--output-format', 'json',
+    '--json-schema', JSON.stringify(LINK_SYNC_SCHEMA),
+    '--tools', 'ToolSearch',
+    '--allowedTools', 'ToolSearch', ...LINK_READ_TOOLS,
+    '--permission-mode', 'dontAsk',
+    '--max-budget-usd', LINK_SYNC_MAX_USD,
+    '--no-session-persistence',
+  ], { cwd: os.tmpdir(), timeoutMs: LINK_SYNC_TIMEOUT_MS });
+
+  const result = JSON.parse(stdout);
+  const output = result.structured_output;
+  if (result.is_error || !output) {
+    throw new Error(String(result.result || result.subtype || 'Claude returned no structured output').slice(0, 300));
+  }
+
+  const payload = { customerName, tasks: output.tasks };
+  if (output.fields) payload.fields = output.fields;
+  await runProcess(process.execPath, [path.join(__dirname, 'write-link-data.js')], { input: JSON.stringify(payload) });
+
+  const costUsd = result.total_cost_usd;
+  console.log(`[link-sync] ${customerName}: done, ${output.tasks.length} tasks, fields=${output.fields ? 'yes' : 'no'}, $${costUsd?.toFixed(2)}`);
+  return { taskCount: output.tasks.length, hasFields: !!output.fields, notes: output.notes, costUsd };
+}
+
 async function handleApi(req, res) {
   const url = req.url.split('?')[0];
 
@@ -416,6 +513,31 @@ async function handleApi(req, res) {
 
     const { rows } = await pgPool.query(byId, [id]);
     return jsonResponse(res, 200, rows[0]);
+  }
+
+  // POST /api/link-data/:customerName/sync — start a headless Claude Code Link sync
+  // GET  /api/link-data/:customerName/sync — poll that sync's state
+  const linkSyncMatch = url.match(/^\/api\/link-data\/(.+)\/sync$/);
+  if (linkSyncMatch) {
+    const customerName = decodeURIComponent(linkSyncMatch[1]);
+    if (req.method === 'GET') {
+      return jsonResponse(res, 200, LINK_SYNC_JOBS.get(customerName) ?? { state: 'idle' });
+    }
+    if (req.method === 'POST') {
+      if (customerName.startsWith('QA-')) {
+        return jsonResponse(res, 400, { error: 'QA- customers are excluded from Link sync' });
+      }
+      if (LINK_SYNC_JOBS.get(customerName)?.state === 'running') {
+        return jsonResponse(res, 409, LINK_SYNC_JOBS.get(customerName));
+      }
+      const job = { state: 'running', startedAt: new Date().toISOString() };
+      LINK_SYNC_JOBS.set(customerName, job);
+      runLinkSync(customerName)
+        .then(result => Object.assign(job, { state: 'done', ...result }))
+        .catch(err => Object.assign(job, { state: 'failed', error: err.message }))
+        .finally(() => { job.finishedAt = new Date().toISOString(); });
+      return jsonResponse(res, 202, job);
+    }
   }
 
   // GET /api/link-data/:customerName — Link data cache, read-only

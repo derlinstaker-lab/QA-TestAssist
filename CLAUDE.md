@@ -65,6 +65,7 @@ Plain `http.createServer`, no Express/Fastify. Responsibilities:
 
 - `GET /api/postman-environments`, `GET /api/postman-collections` — DB-backed reads of the synced Postman cache.
 - `GET /api/customers`, `POST /api/customers`, `GET/PATCH /api/customers/:id` — customer CRUD against Postgres. `UPDATABLE_FIELDS` in `dev-server.js` is the whitelist mapping camelCase request keys to snake_case columns; add new customer fields there **and** in `CUSTOMERS_QUERY` (and the DB schema) together.
+- `GET /api/link-data/:customerName` — reads the Postgres cache of a customer's Link data. `POST /api/link-data/:customerName/sync` starts a background headless `claude -p` run (prompt in `scripts/link-sync-prompt.md`, read-only Link tools only, capped by `LINK_SYNC_MAX_USD`) that writes through `scripts/write-link-data.js`; `GET …/sync` polls it. Jobs live in memory, so a server restart drops them. A run takes ~5–15 min and costs a few dollars.
 - `POST /api/run` — shells out to the local Postman CLI binary (hardcoded path `/opt/homebrew/bin/postman`) to run a collection/folder/environment and returns the Newman-JSON report.
 - `POST /api/probe` — server-side HTTP GET proxy so the browser can hit arbitrary customer URLs without hitting CORS.
 
