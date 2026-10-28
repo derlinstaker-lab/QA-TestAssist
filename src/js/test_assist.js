@@ -149,6 +149,7 @@ function initSiteUrls() {
     setSiteUrl('su-qcping',       baseUrl ? baseUrl + '/API/QualityControl/v1.0/Ping?format=JSON' : null);
     setSiteUrl('su-swagger-asset',  baseUrl ? baseUrl + '/swagger/index.html?urls.primaryName=search#/SearchEngine/get_webapi_search_searchengine_troubleshooting_get_index_43D_v1' : null);
     setSiteUrl('su-docker-history', baseUrl ? baseUrl + '/C.aspx?VP3=CortexUpgradeDocker_History' : null);
+    setSiteUrl('su-teamspaces-check', baseUrl ? baseUrl + '/admin#/AdminPage&$PEP=Teamspaces_BO.Data.Activated' : null);
   }
 
   function resetAndUpdate() {
